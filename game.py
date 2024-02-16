@@ -2,7 +2,7 @@ import pygame
 from snake import Snake
 from food import Food
 from text import Text
-from const import WHITE, WIDTH, HEIGHT, FRAME_PER_SECOND
+from const import WHITE, WIDTH, HEIGHT, FRAME_PER_SECOND, AI_FPS
 
 class Game:
     def __init__(self, title: str):
@@ -11,7 +11,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = False
         self.snake = Snake()
-        self.food = Food()
+        self.food = Food(self.snake)
 
         self.score = 0
 
@@ -54,9 +54,9 @@ class Game:
             return reward, game_over, self.score
         if self.snake.x == self.food.x and self.snake.y == self.food.y:
             self.score += 1
-            self.frame_iteration = 0
             reward = 10
-            self.food.respawn()
+            self.frame_iteration = 0
+            self.food.respawn(self.snake)
         else:
             self.snake.body.pop()
 
@@ -64,7 +64,7 @@ class Game:
         self.render()
         pygame.display.update()
 
-        self.clock.tick(FRAME_PER_SECOND)
+        self.clock.tick(AI_FPS)
         return reward, game_over, self.score
         
 
@@ -83,14 +83,14 @@ class Game:
         self.score = 0
         self.frame_iteration = 0
         self.snake.respawn()
-        self.food.respawn()
+        self.food.respawn(self.snake)
 
     def update(self):
         self.snake.update()
 
         # Eat Food
         if self.snake.x == self.food.x and self.snake.y == self.food.y:
-            self.food.respawn()
+            self.food.respawn(self.snake)
             self.score += 1
         else:
             self.snake.body.pop()

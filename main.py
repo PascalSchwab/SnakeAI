@@ -1,6 +1,7 @@
 from game import Game
 from agent import QAgent
 import pygame
+import os
 
 def loadRecord():
     file = open("./model/data.txt", "r")
@@ -19,16 +20,14 @@ def train():
     game = Game("Snake")
 
     # Load
-    agent.model.load("./model/model.pth")
-    record = loadRecord()
-    print("Loaded Model: " + str(agent.model.state_dict()))
+    if os.path.exists("./model/data.txt"):
+        record = loadRecord()
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 agent.model.save()
                 saveRecord(record)
-                print("Saved Model: " + str(agent.model.state_dict()))
                 pygame.quit()
                 quit()
 

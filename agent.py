@@ -12,7 +12,6 @@ from game import Game
 class QAgent():
     def __init__(self):
         self.game_count = 0
-        self.epsilon = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=MAX_MEMORY)
         self.model = QNet(11, 256, 3)
@@ -78,15 +77,10 @@ class QAgent():
         self.trainer.train_step(state, action, reward, next_state, done)
 
     def get_action(self, state):
-        epsilon = 80 - self.game_count
         final_move = [0, 0, 0]
-        if random.randint(0, 200) < epsilon:
-            move = random.randint(0, 2)
-            final_move[move] = 1
-        else:
-            state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
-            move = torch.argmax(prediction).item()
-            final_move[move] = 1
+        state0 = torch.tensor(state, dtype=torch.float)
+        prediction = self.model(state0)
+        move = torch.argmax(prediction).item()
+        final_move[move] = 1
 
         return final_move

@@ -9,6 +9,10 @@ class QNet(nn.Module):
         self.linear1 = nn.Linear(input_size, hidden_size)
         self.linear2 = nn.Linear(hidden_size, output_size)
 
+        if os.path.exists("./model/model.pth"):
+            self.load_state_dict(torch.load("model/model.pth"))
+            print("Model loaded")
+
     def forward(self, x):
         x = F.relu(self.linear1(x))
         x = self.linear2(x)
