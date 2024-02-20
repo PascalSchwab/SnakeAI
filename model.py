@@ -3,15 +3,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 import os
 
-class QNet(nn.Module):
+class Model(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
         self.linear1 = nn.Linear(input_size, hidden_size)
         self.linear2 = nn.Linear(hidden_size, output_size)
 
         if os.path.exists("./model/model.pth"):
-            self.load_state_dict(torch.load("model/model.pth"))
-            print("Model loaded")
+            self.load("model/model.pth")
 
     def forward(self, x):
         x = F.relu(self.linear1(x))
@@ -25,7 +24,8 @@ class QNet(nn.Module):
 
         file_name = os.path.join(model_folder_path, file_name)
         torch.save(self.state_dict(), file_name)
+        print("Model saved")
     
     def load(self, path):
         self.load_state_dict(torch.load(path))
-        self.eval()
+        print("Model loaded")

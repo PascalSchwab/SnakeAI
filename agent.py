@@ -3,8 +3,8 @@ import torch
 import random
 import numpy as np
 from collections import deque
-from network import QNet
-from trainer import QTrainer
+from model import Model
+from trainer import Trainer
 from direction import Direction
 from point import Point
 from game import Game
@@ -14,8 +14,8 @@ class QAgent():
         self.game_count = 0
         self.gamma = 0.9
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = QNet(11, 256, 3)
-        self.trainer = QTrainer(self.model, LEARNING_RATE, self.gamma)
+        self.model = Model(11, 256, 3)
+        self.trainer = Trainer(self.model, LEARNING_RATE, self.gamma)
 
     def is_collision(self, point: Point, game: Game):
         return game.is_colliding(point.x, point.y)
@@ -62,11 +62,11 @@ class QAgent():
         return np.array(state, dtype=int)
 
     def remember(self, state, action, reward, next_state, done):
-        self.memory.append((state, action, reward, next_state, done))  # popleft if MAX_MEMORY is reached
+        self.memory.append((state, action, reward, next_state, done))
 
     def train_long_memory(self):
         if len(self.memory) > BATCH_SIZE:
-            mini_sample = random.sample(self.memory, BATCH_SIZE)  # list of tuples
+            mini_sample = random.sample(self.memory, BATCH_SIZE)
         else:
             mini_sample = self.memory
 
